@@ -4,7 +4,7 @@ import sqlite3
 
 #Constants and Variables
 DATABASE = "speedrunner.db"
-
+country_data = ["USA", "AUS", "CAN", "UKR", "RUS", "BEL", "DEU", "ESP", "FIN", "DEU"]
 
 #Functions
 def print_all_speedrunners():
@@ -21,11 +21,28 @@ def print_all_speedrunners():
     #loop finished here
     db.close()
 
+
 def speedrunner_all_time_pb():
     '''print all the speedrunners by their all time bests'''
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-    sql = "SELECT * FROM speedrunner ORDER BY all_time_pb ASC"
+    while True:
+        time = input("Less than how long?\n 07:30\n 10:00\n 12:30\n")
+        if time in ["07:30", "10:00", "12:30"]:
+            break
+        else:
+            print("Invalid input. Please try again.")
+    while True:
+        comparitive = input("Greater or less than?\n")
+        if comparitive == "Greater than":
+            symbol = ">"
+            break
+        elif comparitive == "Lesser than":
+            symbol = "<"
+            break
+        else:
+            print("Invalid answer")
+    sql = f"SELECT * FROM speedrunner WHERE all_time_pb {symbol} '{time}' ORDER BY all_time_pb ASC"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
@@ -34,12 +51,30 @@ def speedrunner_all_time_pb():
         print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
     db.close()
+
 
 def speedrunner_season_pb():
     '''print all the speedrunners by their season bests'''
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-    sql = "SELECT * FROM speedrunner ORDER BY season_pb ASC"
+    while True:
+        time = input("How long?\n 07:30\n 10:00\n 12:30\n")
+        if time in ["07:30", "10:00", "12:30"]:
+            break
+        else:
+            print("Invalid input. Please try again.")
+    while True:
+        comparitive = input("Greater or less than?\n")
+        if comparitive == "Greater than":
+            symbol = ">"
+            break
+        elif comparitive == "Lesser than":
+            symbol = "<"
+            break
+        else:
+            print("Invalid answer")
+
+    sql = f"SELECT * FROM speedrunner WHERE season_pb {symbol} '{time}' ORDER BY season_pb ASC"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
@@ -48,12 +83,33 @@ def speedrunner_season_pb():
         print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
     db.close()
+
 
 def speedrunner_country():
     '''print all the speedrunners by their country'''
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-    sql = "SELECT * FROM speedrunner ORDER BY country;"
+    while True:
+        country = input("Which country? ")
+        if country in country_data:
+            break
+        elif country == "All":
+            country = "USA', 'AUS', 'CAN', 'UKR', 'RUS', 'BEL', 'DEU', 'ESP', 'FIN', 'DEU"
+            break
+        elif country not in country_data:
+            db = sqlite3.connect(DATABASE)
+            cursor = db.cursor()
+            sql = f"SELECT country FROM speedrunner WHERE country IN ('{country}')"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            missing_country = [result[0] for result in results]
+            if len(results) > 0:
+                print("There is a missing country in the data")
+                country_data.append(missing_country[0])
+                break
+            else:
+                print("That isn't a country in the data")
+    sql = f"SELECT * FROM speedrunner WHERE country IN ('{country}') ORDER BY country;"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
@@ -63,11 +119,16 @@ def speedrunner_country():
     #loop finished here
     db.close()
 
+
 def speedrunner_tier():
     '''Print all the speedrunners by their tier'''
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-    sql = "SELECT * FROM speedrunner ORDER BY ranking_tier;"
+    tier = input("Which tier?\n Netherite\n Diamond\n Gold\n Iron\n Coal\n")
+    if tier == "All":
+        sql = "SELECT * FROM speedrunner ORDER BY ranking_tier;"
+    else:
+        sql = f"SELECT * FROM speedrunner WHERE ranking_tier = '{tier}' ORDER BY username;"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
@@ -92,6 +153,7 @@ while True:
     elif user_input == "5":
         speedrunner_tier()
     elif user_input == "6":
+        print("\nGoodbye!")
         break
     else:
         print("\nThat was not an option\n")
