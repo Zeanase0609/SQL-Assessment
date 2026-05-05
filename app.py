@@ -58,10 +58,16 @@ def speedrunner_season_pb():
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
     while True:
-        time = input("How long?\n 07:30\n 10:00\n 12:30\n")
-        if time in ["07:30", "10:00", "12:30"]:
+        try:
+            minutes = int(input("How many minutes?\n"))
             break
-        else:
+        except ValueError:
+            print("Invalid input. Please try again.")
+    while True:
+        try:
+            seconds = input("How many minutes?\n")
+            break
+        except ValueError:
             print("Invalid input. Please try again.")
     while True:
         comparitive = input("Greater or less than?\n")
@@ -73,8 +79,7 @@ def speedrunner_season_pb():
             break
         else:
             print("Invalid answer")
-
-    sql = f"SELECT * FROM speedrunner WHERE season_pb {symbol} '{time}' ORDER BY season_pb ASC"
+    sql = f"SELECT * FROM speedrunner WHERE season_pb {symbol} '{minutes}:{seconds}' ORDER BY season_pb ASC"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
@@ -104,11 +109,11 @@ def speedrunner_country():
             results = cursor.fetchall()
             missing_country = [result[0] for result in results]
             if len(results) > 0:
-                print("There is a missing country in the data")
+                print("You've added a new country intp the system")
                 country_data.append(missing_country[0])
                 break
             else:
-                print("That isn't a country in the data")
+                print("That isn't a country in the system")
     sql = f"SELECT * FROM speedrunner WHERE country IN ('{country}') ORDER BY country;"
     cursor.execute(sql)
     results = cursor.fetchall()
