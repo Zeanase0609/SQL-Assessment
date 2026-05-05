@@ -11,7 +11,14 @@ def print_all_speedrunners():
     '''print all the speedrunners nicely'''
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
-    sql = "SELECT * FROM speedrunner"
+    while True:
+        try:
+            num_speedrunners = int(input("How many speedrunners?\n"))
+            if num_speedrunners > 0:
+                break
+        except ValueError:
+            print("Invalid input. Please try again.")
+    sql = f"SELECT * FROM speedrunner LIMIT {num_speedrunners}"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
@@ -27,10 +34,16 @@ def speedrunner_all_time_pb():
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
     while True:
-        time = input("Less than how long?\n 07:30\n 10:00\n 12:30\n")
-        if time in ["07:30", "10:00", "12:30"]:
+        try:
+            minutes = int(input("How many minutes?\n"))
             break
-        else:
+        except ValueError:
+            print("Invalid input. Please try again.")
+    while True:
+        try:
+            seconds = input("How many seconds?\n")
+            break
+        except ValueError:
             print("Invalid input. Please try again.")
     while True:
         comparitive = input("Greater or less than?\n")
@@ -42,7 +55,14 @@ def speedrunner_all_time_pb():
             break
         else:
             print("Invalid answer")
-    sql = f"SELECT * FROM speedrunner WHERE all_time_pb {symbol} '{time}' ORDER BY all_time_pb ASC"
+    while True:
+        try:
+            num_speedrunners = int(input("How many speedrunners?\n"))
+            if num_speedrunners > 0:
+                break
+        except ValueError:
+            print("Invalid input. Please try again.")
+    sql = f"SELECT * FROM speedrunner WHERE all_time_pb {symbol} '{minutes}:{seconds}' ORDER BY all_time_pb ASC LIMit {num_speedrunners};"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
@@ -65,7 +85,7 @@ def speedrunner_season_pb():
             print("Invalid input. Please try again.")
     while True:
         try:
-            seconds = input("How many minutes?\n")
+            seconds = input("How many seconds?\n")
             break
         except ValueError:
             print("Invalid input. Please try again.")
@@ -79,7 +99,14 @@ def speedrunner_season_pb():
             break
         else:
             print("Invalid answer")
-    sql = f"SELECT * FROM speedrunner WHERE season_pb {symbol} '{minutes}:{seconds}' ORDER BY season_pb ASC"
+    while True:
+        try:
+            num_speedrunners = int(input("How many speedrunners?\n"))
+            if num_speedrunners > 0:
+                break
+        except ValueError:
+            print("Invalid input. Please try again.")            
+    sql = f"SELECT * FROM speedrunner WHERE season_pb {symbol} '{minutes}:{seconds}' ORDER BY season_pb ASC LIMIT {num_speedrunners};"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
@@ -104,7 +131,7 @@ def speedrunner_country():
         elif country not in country_data:
             db = sqlite3.connect(DATABASE)
             cursor = db.cursor()
-            sql = f"SELECT country FROM speedrunner WHERE country IN ('{country}')"
+            sql = f"SELECT country FROM speedrunner WHERE country IN ('{country}');"
             cursor.execute(sql)
             results = cursor.fetchall()
             missing_country = [result[0] for result in results]
@@ -114,7 +141,14 @@ def speedrunner_country():
                 break
             else:
                 print("That isn't a country in the system")
-    sql = f"SELECT * FROM speedrunner WHERE country IN ('{country}') ORDER BY country;"
+    while True:
+        try:
+            num_speedrunners = int(input("How many speedrunners?\n"))
+            if num_speedrunners > 0:
+                break
+        except ValueError:
+            print("Invalid input. Please try again.")
+    sql = f"SELECT * FROM speedrunner WHERE country IN ('{country}') ORDER BY country LIMIT {num_speedrunners};"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
@@ -129,11 +163,19 @@ def speedrunner_tier():
     '''Print all the speedrunners by their tier'''
     db = sqlite3.connect(DATABASE)
     cursor = db.cursor()
+    while True:
+        try:
+            num_speedrunners = int(input("How many speedrunners?\n"))
+            if num_speedrunners > 0:
+                break
+        except ValueError:
+            print("Invalid input. Please try again.")
     tier = input("Which tier?\n Netherite\n Diamond\n Gold\n Iron\n Coal\n")
     if tier == "All":
-        sql = "SELECT * FROM speedrunner ORDER BY ranking_tier;"
+        sql = f"SELECT * FROM speedrunner ORDER BY ranking_tier LIMIT {num_speedrunners};"
     else:
-        sql = f"SELECT * FROM speedrunner WHERE ranking_tier = '{tier}' ORDER BY username;"
+        sql = f"SELECT * FROM speedrunner WHERE ranking_tier = '{tier}' ORDER BY username LIMIT {num_speedrunners};"
+    
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
