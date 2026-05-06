@@ -214,7 +214,7 @@ def speedrunner_specific():
 
 #Main Code
 while True:
-    user_input = input("\nWhat would you like to do?\n1. Print all speedrunners\n2. Print speedrunners by all-time PB\n3. Print speedrunners by season PB\n4. Print speedrunners by their country\n5. Print speedrunners by their tier\n6. Find a speedrunner\n7. Exit\n")
+    user_input = input("\nWhat would you like to do?\n1. Print all speedrunners\n2. Print speedrunners by all-time PB\n3. Print speedrunners by season PB\n4. Print speedrunners by their country\n5. Print speedrunners by their tier\n6. Find a specific speedrunner\n7. Exit\n")
     if user_input == "1":
         print_all_speedrunners()
     elif user_input == "2":
