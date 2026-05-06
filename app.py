@@ -199,7 +199,7 @@ def speedrunner_specific():
         if len(results) > 0:
             break
         else:
-            print("That isn't a player in the system")        
+            print("That isn't a player in the system\n")        
     sql = f"SELECT * FROM speedrunner WHERE username LIKE ('{name}');"
     cursor.execute(sql)
     results = cursor.fetchall()
