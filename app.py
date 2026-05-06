@@ -136,7 +136,7 @@ def speedrunner_country():
             results = cursor.fetchall()
             missing_country = [result[0] for result in results]
             if len(results) > 0:
-                print("You've added a new country intp the system")
+                print("You've added a new country into the system")
                 country_data.append(missing_country[0])
                 break
             else:
@@ -185,10 +185,36 @@ def speedrunner_tier():
     #loop finished here
     db.close()
 
+def speedrunner_specific():
+    '''Print a specific speedrunner'''
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+    while True:
+        name = input("Which player are you looking for?\n")
+        db = sqlite3.connect(DATABASE)
+        cursor = db.cursor()
+        sql = f"SELECT * FROM speedrunner WHERE username IN ('{name}');"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        if len(results) > 0:
+            break
+        else:
+            print("That isn't a player in the system")        
+    sql = f"SELECT * FROM speedrunner WHERE username LIKE ('{name}');"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    #loop through all the results 
+    print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
+    for speedrunner in results:
+        print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
+    #loop finished here
+    db.close()
+
+
 
 #Main Code
 while True:
-    user_input = input("\nWhat would you like to do?\n1. Print all speedrunners\n2. Print speedrunners by all-time PB\n3. Print speedrunners by season PB\n4. Print speedrunners by their country\n5. Print speedrunners by their tier\n6. Exit\n")
+    user_input = input("\nWhat would you like to do?\n1. Print all speedrunners\n2. Print speedrunners by all-time PB\n3. Print speedrunners by season PB\n4. Print speedrunners by their country\n5. Print speedrunners by their tier\n6. Find a speedrunner\n7. Exit\n")
     if user_input == "1":
         print_all_speedrunners()
     elif user_input == "2":
@@ -200,6 +226,8 @@ while True:
     elif user_input == "5":
         speedrunner_tier()
     elif user_input == "6":
+        speedrunner_specific()
+    elif user_input == "7":
         print("\nGoodbye!")
         break
     else:
