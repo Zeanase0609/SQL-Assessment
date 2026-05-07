@@ -210,11 +210,35 @@ def speedrunner_specific():
     #loop finished here
     db.close()
 
+def speedrunner_rank():
+    '''Print a specific speedrunner using their rank'''
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+    while True:
+        rank = input("Which rank are you looking for?\n")
+        db = sqlite3.connect(DATABASE)
+        cursor = db.cursor()
+        sql = f"SELECT * FROM speedrunner WHERE season_rank IN ('{rank}');"
+        cursor.execute(sql)
+        results = cursor.fetchall()
+        if len(results) > 0:
+            break
+        else:
+            print("That isn't a rank in the system\n")        
+    sql = f"SELECT * FROM speedrunner WHERE season_rank LIKE ('{rank}');"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    #loop through all the results 
+    print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
+    for speedrunner in results:
+        print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
+    #loop finished here
+    db.close()
 
 
 #Main Code
 while True:
-    user_input = input("\nWhat would you like to do?\n1. Print all speedrunners\n2. Print speedrunners by all-time PB\n3. Print speedrunners by season PB\n4. Print speedrunners by their country\n5. Print speedrunners by their tier\n6. Find a specific speedrunner\n7. Exit\n")
+    user_input = input("\nWhat would you like to do?\n1. Print all speedrunners\n2. Print speedrunners by all-time PB\n3. Print speedrunners by season PB\n4. Print speedrunners by their country\n5. Print speedrunners by their tier\n6. Find a specific speedrunner\n7. Find a player by their rank\n8. Exit\n")
     if user_input == "1":
         print_all_speedrunners()
     elif user_input == "2":
@@ -228,6 +252,8 @@ while True:
     elif user_input == "6":
         speedrunner_specific()
     elif user_input == "7":
+        speedrunner_rank()
+    elif user_input == "8":
         print("\nGoodbye!")
         break
     else:
