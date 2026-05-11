@@ -79,6 +79,12 @@ def speedrunner_season_pb():
     cursor = db.cursor()
     while True:
         try:
+            season = int(input("Which season?\n"))
+            break
+        except ValueError:
+            print("Invalid input. Please try again.")         
+    while True:
+        try:
             minutes = int(input("How many minutes?\n"))
             break
         except ValueError:
@@ -106,7 +112,7 @@ def speedrunner_season_pb():
                 break
         except ValueError:
             print("Invalid input. Please try again.")            
-    sql = f"SELECT * FROM speedrunner WHERE season_pb {symbol} '{minutes}:{seconds}' ORDER BY season_pb ASC LIMIT {num_speedrunners};"
+    sql = f"SELECT * FROM speedrunner, season_time WHERE season_time.personal_best {symbol} '{minutes}:{seconds}' AND season_time.season = {season} ORDER BY season_time.personal_best ASC LIMIT {num_speedrunners};"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
