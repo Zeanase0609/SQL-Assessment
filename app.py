@@ -72,7 +72,6 @@ def speedrunner_all_time_pb():
     #loop finished here
     db.close()
 
-
 def speedrunner_season_pb():
     '''print all the speedrunners by their season bests'''
     db = sqlite3.connect(DATABASE)
@@ -191,6 +190,49 @@ def speedrunner_tier():
     #loop finished here
     db.close()
 
+def speedrunner_elo():
+    '''print all the speedrunners by their elo'''
+    db = sqlite3.connect(DATABASE)
+    cursor = db.cursor()
+    while True:
+        try:
+            season = int(input("Which season?\n"))
+            break
+        except ValueError:
+            print("Invalid input. Please try again.")      
+    while True:
+        try:
+            elo = int(input("How much elo?\n"))
+            break
+        except ValueError:
+            print("Invalid input. Please try again.") 
+    while True:
+        comparitive = input("Greater or less than?\n")
+        if comparitive == "Greater than":
+            symbol = ">"
+            break
+        elif comparitive == "Lesser than":
+            symbol = "<"
+            break
+        else:
+            print("Invalid answer")
+    while True:
+        try:
+            num_speedrunners = int(input("How many speedrunners?\n"))
+            if num_speedrunners > 0:
+                break
+        except ValueError:
+            print("Invalid input. Please try again.")            
+    sql = f"SELECT * FROM speedrunner, season_elo WHERE season_elo.elo {symbol} '{elo}' AND season_elo.season = {season} ORDER BY season_elo.elo ASC LIMIT {num_speedrunners};"
+    cursor.execute(sql)
+    results = cursor.fetchall()
+    #loop through all the results 
+    print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
+    for speedrunner in results:
+        print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
+    #loop finished here
+    db.close()
+
 def speedrunner_specific():
     '''Print a specific speedrunner'''
     db = sqlite3.connect(DATABASE)
@@ -244,7 +286,7 @@ def speedrunner_rank():
 
 #Main Code
 while True:
-    user_input = input("\nWhat would you like to do?\n1. Print all speedrunners\n2. Print speedrunners by all-time PB\n3. Print speedrunners by season PB\n4. Print speedrunners by their country\n5. Print speedrunners by their tier\n6. Find a specific speedrunner\n7. Find a player by their rank\n8. Exit\n")
+    user_input = input("\nWhat would you like to do?\n1. Print all speedrunners\n2. Print speedrunners by all-time PB\n3. Print speedrunners by season PB\n4. Print speedrunners by their country\n5. Print speedrunners by their tier\n6. Print speedrunners by their elo\n7. Find a specific speedrunner\n8. Find a player by their rank\n9. Exit\n\n")
     if user_input == "1":
         print_all_speedrunners()
     elif user_input == "2":
@@ -256,10 +298,12 @@ while True:
     elif user_input == "5":
         speedrunner_tier()
     elif user_input == "6":
-        speedrunner_specific()
+        speedrunner_elo()
     elif user_input == "7":
-        speedrunner_rank()
+        speedrunner_specific()
     elif user_input == "8":
+        speedrunner_rank()
+    elif user_input == "9":
         print("\nGoodbye!")
         break
     else:
