@@ -95,7 +95,7 @@ def speedrunner_season_pb():
         except ValueError:
             print("Invalid input. Please try again.")
     while True:
-        comparitive = input("Greater or less than?\n")
+        comparitive = input("Greater or lesser than?\n")
         if comparitive == "Greater than":
             symbol = ">"
             break
@@ -111,13 +111,13 @@ def speedrunner_season_pb():
                 break
         except ValueError:
             print("Invalid input. Please try again.")            
-    sql = f"SELECT * FROM speedrunner, season_time WHERE season_time.personal_best {symbol} '{minutes}:{seconds}' AND season_time.season = {season} ORDER BY season_time.personal_best ASC LIMIT {num_speedrunners};"
+    sql = f"SELECT speedrunner.*, season_time.personal_best FROM speedrunner, season_time WHERE season_time.personal_best {symbol} '{minutes}:{seconds}' AND season_time.season = {season} AND speedrunner.uuid = season_time.uuid ORDER BY season_time.personal_best ASC LIMIT {num_speedrunners};"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
     print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
     for speedrunner in results:
-        print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
+        print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[9]:<22}{speedrunner[8]:<9}")
     #loop finished here
     db.close()
 
