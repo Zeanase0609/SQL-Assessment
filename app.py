@@ -223,7 +223,7 @@ def speedrunner_elo():
                 break
         except ValueError:
             print("Invalid input. Please try again.")            
-    sql = f"SELECT * FROM speedrunner, season_elo WHERE season_elo.elo {symbol} '{elo}' AND season_elo.season = {season} ORDER BY season_elo.elo ASC LIMIT {num_speedrunners};"
+    sql = f"SELECT * FROM speedrunner, season_elo WHERE season_elo.elo {symbol} '{elo}' AND season_elo.season = {season} AND speedrunner.uuid = season_elo.uuid ORDER BY season_elo.elo DESC LIMIT {num_speedrunners};"
     cursor.execute(sql)
     results = cursor.fetchall()
     #loop through all the results 
