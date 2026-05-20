@@ -1,16 +1,18 @@
 #docstring- Sean Zheng- Spedrunner Database Application
 #Imports
 import sqlite3
+import os
 
 #Constants and Variables
-DATABASE = "speedrunner.db"
+basedir = os.path.abspath(os.path.dirname(__file__))
+db_path = os.path.join(basedir, 'speedrunner.db')
 country_data = ["USA", "AUS", "CAN", "UKR", "RUS", "BEL", "DEU", "ESP", "FIN", "DEU"]
 
 #Functions
 def print_all_speedrunners():
     '''print all the speedrunners nicely'''
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
     while True:
         try:
             num_speedrunners = int(input("How many speedrunners?\n"))
@@ -26,13 +28,13 @@ def print_all_speedrunners():
     for speedrunner in results:
         print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
-    db.close()
+    conn.close()
 
 
 def speedrunner_all_time_pb():
     '''print all the speedrunners by their all time bests'''
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
     while True:
         try:
             minutes = int(input("How many minutes?\n"))
@@ -70,16 +72,25 @@ def speedrunner_all_time_pb():
     for speedrunner in results:
         print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
-    db.close()
+    conn.close()
 
 def speedrunner_season_pb():
     '''print all the speedrunners by their season bests'''
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
     while True:
         try:
             season = int(input("Which season?\n"))
-            break
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            sql = f"SELECT season FROM season_time WHERE ('{season}') like season;"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            season_num = [result[0] for result in results]
+            if len(season_num) == 0:
+                print("This season hasn't occured yet")
+            else:
+                break
         except ValueError:
             print("Invalid input. Please try again.")         
     while True:
@@ -119,13 +130,13 @@ def speedrunner_season_pb():
     for speedrunner in results:
         print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[9]:<22}{speedrunner[8]:<9}")
     #loop finished here
-    db.close()
+    conn.close()
 
 
 def speedrunner_country():
     '''print all the speedrunners by their country'''
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
     while True:
         country = input("Which country? ")
         if country in country_data:
@@ -134,8 +145,8 @@ def speedrunner_country():
             country = "USA', 'AUS', 'CAN', 'UKR', 'RUS', 'BEL', 'DEU', 'ESP', 'FIN', 'DEU"
             break
         elif country not in country_data:
-            db = sqlite3.connect(DATABASE)
-            cursor = db.cursor()
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
             sql = f"SELECT country FROM speedrunner WHERE country IN ('{country}');"
             cursor.execute(sql)
             results = cursor.fetchall()
@@ -161,13 +172,13 @@ def speedrunner_country():
     for speedrunner in results:
         print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
-    db.close()
+    conn.close()
 
 
 def speedrunner_tier():
     '''Print all the speedrunners by their tier'''
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
     while True:
         try:
             num_speedrunners = int(input("How many speedrunners?\n"))
@@ -188,18 +199,27 @@ def speedrunner_tier():
     for speedrunner in results:
         print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
-    db.close()
+    conn.close()
 
 def speedrunner_elo():
     '''print all the speedrunners by their elo'''
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
     while True:
         try:
             season = int(input("Which season?\n"))
-            break
+            conn = sqlite3.connect(db_path)
+            cursor = conn.cursor()
+            sql = f"SELECT season FROM season_elo WHERE ('{season}') like season;"
+            cursor.execute(sql)
+            results = cursor.fetchall()
+            season_num = [result[0] for result in results]
+            if len(season_num) == 0:
+                print("This season hasn't occured yet")
+            else:
+                break
         except ValueError:
-            print("Invalid input. Please try again.")      
+            print("Invalid input. Please try again.")     
     while True:
         try:
             elo = int(input("How much elo?\n"))
@@ -231,23 +251,23 @@ def speedrunner_elo():
     for speedrunner in results:
         print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
-    db.close()
+    conn.close()
 
 def speedrunner_specific():
     '''Print a specific speedrunner'''
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
     while True:
         name = input("Which player are you looking for?\n")
-        db = sqlite3.connect(DATABASE)
-        cursor = db.cursor()
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
         sql = f"SELECT * FROM speedrunner WHERE username IN ('{name}');"
         cursor.execute(sql)
         results = cursor.fetchall()
         if len(results) > 0:
             break
         else:
-            print("That isn't a player in the system\n")        
+            print("That isn't a player in the system\n")
     sql = f"SELECT * FROM speedrunner WHERE username LIKE ('{name}');"
     cursor.execute(sql)
     results = cursor.fetchall()
@@ -256,16 +276,16 @@ def speedrunner_specific():
     for speedrunner in results:
         print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
-    db.close()
+    conn.close()
 
 def speedrunner_rank():
     '''Print a specific speedrunner using their rank'''
-    db = sqlite3.connect(DATABASE)
-    cursor = db.cursor()
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
     while True:
         rank = input("Which rank are you looking for?\n")
-        db = sqlite3.connect(DATABASE)
-        cursor = db.cursor()
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
         sql = f"SELECT * FROM speedrunner WHERE season_rank IN ('{rank}');"
         cursor.execute(sql)
         results = cursor.fetchall()
@@ -281,7 +301,7 @@ def speedrunner_rank():
     for speedrunner in results:
         print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
-    db.close()
+    conn.close()
 
 
 #Main Code
