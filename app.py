@@ -18,6 +18,8 @@ def print_all_speedrunners():
             num_speedrunners = int(input("How many speedrunners?\n"))
             if num_speedrunners > 0:
                 break
+            else:
+                print("Invalid input. Please try again.")
         except ValueError:
             print("Invalid input. Please try again.")
     sql = f"SELECT * FROM speedrunner LIMIT {num_speedrunners}"
@@ -38,21 +40,30 @@ def speedrunner_all_time_pb():
     while True:
         try:
             minutes = int(input("How many minutes?\n"))
-            break
+            if 0 <= minutes <= 59:
+                break
+            else:
+                print("Invalid input. Please try again.")
         except ValueError:
             print("Invalid input. Please try again.")
     while True:
         try:
             seconds = input("How many seconds?\n")
+            if 0 <= int(seconds) <= 59:
+                break
+            else:
+                print("Invalid input. Please try again.")
+        except ValueError:
+            print("Invalid input. Please try again.")
             break
         except ValueError:
             print("Invalid input. Please try again.")
     while True:
-        comparitive = input("Greater or less than?\n")
-        if comparitive == "Greater than":
+        comparitive = input("Greater or lesser than?\n").title()
+        if comparitive == "Greater Than":
             symbol = ">"
             break
-        elif comparitive == "Lesser than":
+        elif comparitive == "Lesser Than":
             symbol = "<"
             break
         else:
@@ -62,15 +73,21 @@ def speedrunner_all_time_pb():
             num_speedrunners = int(input("How many speedrunners?\n"))
             if num_speedrunners > 0:
                 break
+            else:
+                print("Invalid input. Please try again.")
         except ValueError:
             print("Invalid input. Please try again.")
     sql = f"SELECT * FROM speedrunner WHERE all_time_pb {symbol} '{minutes}:{seconds}' ORDER BY all_time_pb ASC LIMit {num_speedrunners};"
     cursor.execute(sql)
     results = cursor.fetchall()
-    #loop through all the results 
-    print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
-    for speedrunner in results:
-        print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
+    result_num = [result[0] for result in results]
+    if len(result_num) == 0:
+        print("There's no result for what you asked for")
+    else:
+        #loop through all the results 
+        print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
+        for speedrunner in results:
+            print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
     conn.close()
 
@@ -96,21 +113,27 @@ def speedrunner_season_pb():
     while True:
         try:
             minutes = int(input("How many minutes?\n"))
-            break
+            if 0 <= minutes <= 59:
+                break
+            else:
+                print("Invalid input. Please try again.")
         except ValueError:
             print("Invalid input. Please try again.")
     while True:
         try:
             seconds = input("How many seconds?\n")
-            break
+            if 0 <= int(seconds) <= 59:
+                break
+            else:
+                print("Invalid input. Please try again.")
         except ValueError:
             print("Invalid input. Please try again.")
     while True:
-        comparitive = input("Greater or lesser than?\n")
-        if comparitive == "Greater than":
+        comparitive = input("Greater or lesser than?\n").title()
+        if comparitive == "Greater Than":
             symbol = ">"
             break
-        elif comparitive == "Lesser than":
+        elif comparitive == "Lesser Than":
             symbol = "<"
             break
         else:
@@ -120,15 +143,21 @@ def speedrunner_season_pb():
             num_speedrunners = int(input("How many speedrunners?\n"))
             if num_speedrunners > 0:
                 break
+            else:                
+                print("Invalid input. Please try again.")
         except ValueError:
             print("Invalid input. Please try again.")            
     sql = f"SELECT speedrunner.*, season_time.personal_best FROM speedrunner, season_time WHERE season_time.personal_best {symbol} '{minutes}:{seconds}' AND season_time.season = {season} AND speedrunner.uuid = season_time.uuid ORDER BY season_time.personal_best ASC LIMIT {num_speedrunners};"
     cursor.execute(sql)
     results = cursor.fetchall()
-    #loop through all the results 
-    print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
-    for speedrunner in results:
-        print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[9]:<22}{speedrunner[8]:<9}")
+    result_num = [result[0] for result in results]
+    if len(result_num) == 0:
+        print("There's no result for what you asked for")
+    else:
+        #loop through all the results 
+        print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
+        for speedrunner in results:
+            print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[9]:<22}{speedrunner[8]:<9}")
     #loop finished here
     conn.close()
 
@@ -142,7 +171,6 @@ def speedrunner_country():
         if country in country_data:
             break
         elif country == "All":
-            country = "USA', 'AUS', 'CAN', 'UKR', 'RUS', 'BEL', 'DEU', 'ESP', 'FIN', 'DEU"
             break
         elif country not in country_data:
             conn = sqlite3.connect(db_path)
@@ -162,15 +190,24 @@ def speedrunner_country():
             num_speedrunners = int(input("How many speedrunners?\n"))
             if num_speedrunners > 0:
                 break
+            else:
+                print("Invalid input. Please try again.")   
         except ValueError:
             print("Invalid input. Please try again.")
-    sql = f"SELECT * FROM speedrunner WHERE country IN ('{country}') ORDER BY country LIMIT {num_speedrunners};"
+    if country == "All":
+        sql = f"SELECT * FROM speedrunner ORDER BY country LIMIT {num_speedrunners};"
+    else:
+        sql = f"SELECT * FROM speedrunner WHERE country IN ('{country}') ORDER BY country LIMIT {num_speedrunners};"
     cursor.execute(sql)
     results = cursor.fetchall()
-    #loop through all the results 
-    print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
-    for speedrunner in results:
-        print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
+    result_num = [result[0] for result in results]
+    if len(result_num) == 0:
+        print("There's no result for what you asked for")
+    else:
+        #loop through all the results 
+        print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
+        for speedrunner in results:
+            print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
     conn.close()
 
@@ -190,14 +227,17 @@ def speedrunner_tier():
     if tier == "All":
         sql = f"SELECT * FROM speedrunner ORDER BY ranking_tier LIMIT {num_speedrunners};"
     else:
-        sql = f"SELECT * FROM speedrunner WHERE ranking_tier = '{tier}' ORDER BY username LIMIT {num_speedrunners};"
-    
+        sql = f"SELECT * FROM speedrunner WHERE ranking_tier = '{tier}' ORDER BY username LIMIT {num_speedrunners};"   
     cursor.execute(sql)
     results = cursor.fetchall()
-    #loop through all the results 
-    print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
-    for speedrunner in results:
-        print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
+    result_num = [result[0] for result in results]
+    if len(result_num) == 0:
+        print("There's no result for what you asked for")
+    else:
+        #loop through all the results 
+        print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
+        for speedrunner in results:
+            print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
     conn.close()
 
@@ -241,15 +281,21 @@ def speedrunner_elo():
             num_speedrunners = int(input("How many speedrunners?\n"))
             if num_speedrunners > 0:
                 break
+            else:
+                print("Invalid input. Please try again.")
         except ValueError:
             print("Invalid input. Please try again.")            
     sql = f"SELECT * FROM speedrunner, season_elo WHERE season_elo.elo {symbol} '{elo}' AND season_elo.season = {season} AND speedrunner.uuid = season_elo.uuid ORDER BY season_elo.elo DESC LIMIT {num_speedrunners};"
     cursor.execute(sql)
     results = cursor.fetchall()
-    #loop through all the results 
-    print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
-    for speedrunner in results:
-        print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
+    result_num = [result[0] for result in results]
+    if len(result_num) == 0:
+        print("There's no result for what you asked for")
+    else:
+        #loop through all the results 
+        print("Username                      Country   Rank  Elo    Tier         Season Personal Best  All Time Best")
+        for speedrunner in results:
+            print(f"{speedrunner[2]:<30}{speedrunner[3]:<10}{speedrunner[4]:<6}{speedrunner[5]:<7}{speedrunner[6]:<13}{speedrunner[7]:<22}{speedrunner[8]:<9}")
     #loop finished here
     conn.close()
 
