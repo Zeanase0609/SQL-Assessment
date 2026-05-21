@@ -223,7 +223,7 @@ def speedrunner_tier():
                 break
         except ValueError:
             print("Invalid input. Please try again.")
-    tier = input("Which tier?\n Netherite\n Diamond\n Gold\n Iron\n Coal\n")
+    tier = input("Which tier?\n Netherite\n Diamond\n Gold\n Iron\n Coal\n").title()
     if tier == "All":
         sql = f"SELECT * FROM speedrunner ORDER BY ranking_tier LIMIT {num_speedrunners};"
     else:
